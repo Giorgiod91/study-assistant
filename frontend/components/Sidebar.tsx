@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 type View = "dashboard" | "chat" | "export" | "deadlines";
 
 interface Props {
@@ -42,8 +44,9 @@ export default function Sidebar({ active, onChange }: Props) {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-gray-800">
-        <p className="text-gray-600 text-xs">v1.0 · Railway + Vercel</p>
+      <div className="p-4 border-t border-gray-800 space-y-2">
+        <Link href="/" className="block text-gray-600 hover:text-gray-400 text-xs transition-colors">← Zurück zur Startseite</Link>
+        <p className="text-gray-700 text-xs">v1.0 · Railway + Vercel</p>
       </div>
     </aside>
   );
