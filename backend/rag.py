@@ -73,6 +73,9 @@ class RAGPipeline:
         text = self._extract_text(file_bytes, filename)
         chunks = self._chunk_text(text)
 
+        if not chunks:
+            raise ValueError("Dokument enthält keinen lesbaren Text.")
+
         embeddings = self.embedding_model.encode(chunks).tolist()
 
         collection = self.chroma.get_or_create_collection(f"doc_{doc_id}")
