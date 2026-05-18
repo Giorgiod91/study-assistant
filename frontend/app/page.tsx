@@ -1,37 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import DocumentSidebar from "@/components/DocumentSidebar";
-import ChatWindow from "@/components/ChatWindow";
-import { Document, getDocuments } from "@/lib/api";
+import { useState } from "react";
+import Sidebar from "@/components/Sidebar";
+import DashboardView from "@/components/DashboardView";
+import ChatView from "@/components/ChatView";
+import ExportView from "@/components/ExportView";
+import DeadlinesView from "@/components/DeadlinesView";
+
+type View = "dashboard" | "chat" | "export" | "deadlines";
 
 export default function Home() {
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  async function refresh() {
-    const docs = await getDocuments();
-    setDocuments(docs);
-    if (docs.length > 0 && !selectedId) {
-      setSelectedId(docs[0].id);
-    }
-  }
-
-  useEffect(() => {
-    refresh();
-  }, []);
-
-  const selectedDoc = documents.find((d) => d.id === selectedId) ?? null;
+  const [view, setView] = useState<View>("dashboard");
 
   return (
-    <div className="flex h-screen bg-gray-950">
-      <DocumentSidebar
-        documents={documents}
-        selectedId={selectedId}
-        onSelect={setSelectedId}
-        onRefresh={refresh}
-      />
-      <ChatWindow docId={selectedId} docName={selectedDoc?.filename ?? null} />
+    <div className="flex h-screen bg-gray-950 overflow-hidden">
+      <Sidebar active={view} onChange={setView} />
+      {view === "dashboard" && <DashboardView />}
+      {view === "chat" && <ChatView />}
+      {view === "export" && <ExportView />}
+      {view === "deadlines" && <DeadlinesView />}
     </div>
   );
 }
