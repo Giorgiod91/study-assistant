@@ -18,14 +18,14 @@
 
 ## Das Problem
 
-Ich studiere Informatik (IHK + B.Sc.) und kenne dieses Problem täglich:
+Ich mache eine IHK-Ausbildung zum Fachinformatiker und studiere parallel B.Sc. Computer Science im Fernstudium an der University of the People — und kenne dieses Problem täglich:
 
 - **200-seitige Skripte** — und kein Plan welche Seite die Antwort hat
 - **Abgabetermine** die in 4 verschiedenen Apps, Zetteln und dem Kopf liegen
 - **Mitschriften** als unleserliche Textwand ohne Struktur
 - **Keine Übersicht** ob man überhaupt genug lernt
 
-Klassische Tools helfen nicht wenn man nicht weiß wonach man sucht. Diese App löst das mit **RAG (Retrieval Augmented Generation)** — Claude AI antwortet basierend auf **deinem spezifischen Material**, nicht allgemeinem Internet-Wissen.
+Besonders im Fernstudium ohne feste Präsenzzeiten ist Selbstorganisation alles. Diese App löst das mit **RAG (Retrieval Augmented Generation)** — Claude AI antwortet basierend auf **deinem spezifischen Material**, nicht allgemeinem Internet-Wissen.
 
 ---
 
@@ -206,7 +206,8 @@ study-assistant/
 
 **Giorgio Dettmar** — Junior Full-Stack Developer aus Deutschland
 
-> Dual-Studium: IHK Anwendungsentwicklung (bis 2027) + B.Sc. Informatik  
+> IHK Ausbildung Fachinformatiker Anwendungsentwicklung (bis 2027)  
+> B.Sc. Computer Science — Fernstudium, University of the People  
 > Fokus: AI-Integration, FastAPI, Next.js, TypeScript
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-giorgiodettmar.com-indigo?style=flat-square)](https://giorgiodettmar.com)
