@@ -58,7 +58,7 @@ export default function DocumentSidebar({ documents, selectedId, onSelect, onRef
             </>
           )}
         </button>
-        <input ref={fileRef} type="file" accept=".pdf" className="hidden" onChange={handleUpload} />
+        <input ref={fileRef} type="file" accept=".pdf,.txt,.md,.docx" className="hidden" onChange={handleUpload} />
         {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
       </div>
 

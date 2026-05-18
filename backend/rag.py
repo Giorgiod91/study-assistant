@@ -9,6 +9,7 @@ import anthropic
 import chromadb
 from sentence_transformers import SentenceTransformer
 import pypdf
+import docx
 
 DOCS_REGISTRY = Path("documents.json")
 CHROMA_PATH = "./chroma_db"
@@ -31,32 +32,46 @@ class RAGPipeline:
         self.claude = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         self.registry = load_registry()
 
-    def _extract_text_chunks(self, pdf_bytes: bytes) -> list[str]:
-        reader = pypdf.PdfReader(tempfile.SpooledTemporaryFile())
-        # write bytes into a temp file pypdf can read
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-            tmp.write(pdf_bytes)
-            tmp_path = tmp.name
+    def _extract_text(self, file_bytes: bytes, filename: str) -> str:
+        ext = Path(filename).suffix.lower()
 
-        reader = pypdf.PdfReader(tmp_path)
-        full_text = "\n".join(page.extract_text() or "" for page in reader.pages)
-        os.unlink(tmp_path)
+        if ext == ".pdf":
+            with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+                tmp.write(file_bytes)
+                tmp_path = tmp.name
+            reader = pypdf.PdfReader(tmp_path)
+            text = "\n".join(page.extract_text() or "" for page in reader.pages)
+            os.unlink(tmp_path)
+            return text
 
-        # Split into overlapping chunks of ~800 chars
+        if ext in (".txt", ".md"):
+            return file_bytes.decode("utf-8", errors="ignore")
+
+        if ext == ".docx":
+            with tempfile.NamedTemporaryFile(suffix=".docx", delete=False) as tmp:
+                tmp.write(file_bytes)
+                tmp_path = tmp.name
+            doc = docx.Document(tmp_path)
+            text = "\n".join(p.text for p in doc.paragraphs if p.text.strip())
+            os.unlink(tmp_path)
+            return text
+
+        raise ValueError(f"Nicht unterstütztes Format: {ext}")
+
+    def _chunk_text(self, text: str) -> list[str]:
         chunk_size = 800
         overlap = 150
         chunks = []
         start = 0
-        while start < len(full_text):
-            end = start + chunk_size
-            chunks.append(full_text[start:end])
+        while start < len(text):
+            chunks.append(text[start:start + chunk_size])
             start += chunk_size - overlap
-
         return [c.strip() for c in chunks if len(c.strip()) > 50]
 
-    def ingest(self, pdf_bytes: bytes, filename: str) -> str:
+    def ingest(self, file_bytes: bytes, filename: str) -> str:
         doc_id = str(uuid.uuid4())[:8]
-        chunks = self._extract_text_chunks(pdf_bytes)
+        text = self._extract_text(file_bytes, filename)
+        chunks = self._chunk_text(text)
 
         embeddings = self.embedding_model.encode(chunks).tolist()
 
