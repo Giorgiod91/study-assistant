@@ -4,6 +4,7 @@ load_dotenv()
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from pathlib import Path
 from typing import Optional
 
 from rag import RAGPipeline
@@ -30,10 +31,13 @@ def health():
     return {"status": "ok"}
 
 
+ALLOWED_EXTENSIONS = {".pdf", ".txt", ".md", ".docx"}
+
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
-    if not file.filename.endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Nur PDF-Dateien erlaubt.")
+    ext = Path(file.filename).suffix.lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(status_code=400, detail=f"Nur {', '.join(ALLOWED_EXTENSIONS)} erlaubt.")
     content = await file.read()
     doc_id = rag.ingest(content, file.filename)
     return {"doc_id": doc_id, "filename": file.filename, "message": "Dokument erfolgreich verarbeitet."}
